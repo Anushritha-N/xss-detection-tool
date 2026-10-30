@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrator Login</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="admin-login-page">
+
+    <nav class="login-navigation">
+        <a href="{{ url_for('home') }}">← Back to Home</a>
+    </nav>
+
+    <main class="login-main">
+
+        <section class="login-card">
+
+            <div class="login-icon">🛡</div>
+
+            <span class="login-label">SECURE ACCESS</span>
+
+            <h1>Administrator Login</h1>
+
+            <p class="login-description">
+                Sign in to access the security monitoring dashboard.
+            </p>
+
+            {% if error %}
+                <p class="error-message">{{ error }}</p>
+            {% endif %}
+
+            <form action="{{ url_for('login') }}" method="POST">
+
+                <div class="login-form-group">
+                    <label for="username">Username</label>
+
+                    <input
+                        id="username"
+                        name="username"
+                        type="text"
+                        placeholder="Enter your username"
+                        autocomplete="username"
+                        required
+                    >
+                </div>
+
+                <div class="login-form-group">
+                    <label for="password">Password</label>
+
+                    <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="login-submit">
+                    Log In to Dashboard →
+                </button>
+
+            </form>
+
+            <div class="login-footer">
+                <span>Protected Administrator Access</span>
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

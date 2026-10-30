@@ -1,0 +1,241 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XSS Security Lab</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    
+    <header>
+        <h1>XSS Security Lab</h1>
+        <p>Controlled testing for reflected and stored XSS</p>
+        <p>
+            <a href="{{ url_for('home') }}"
+            style="color: white; text-decoration: underline;">
+                ← Back to Home
+            </a>
+        </p>
+    </header>
+
+
+    <main>
+        <!-- Testing Mode -->
+        <section class="card">
+            <h2>Testing Mode</h2>
+            <p>
+                Choose secure output verification or a controlled simulation
+                of unsafe output. The simulation does not execute submitted HTML.
+            </p>
+
+            <div class="mode-buttons">
+                <form action="{{ url_for('xss_lab') }}" method="GET">
+                    <input type="hidden" name="mode" value="secure">
+                    <button type="submit"
+                            {% if mode == 'secure' %}disabled{% endif %}>
+                        Secure Mode
+                    </button>
+                </form>
+
+                <form action="{{ url_for('xss_lab') }}" method="GET">
+                    <input type="hidden" name="mode" value="simulation">
+                    <button type="submit"
+                            {% if mode == 'simulation' %}disabled{% endif %}>
+                        Vulnerability Simulation
+                    </button>
+                </form>
+            </div>
+
+            <p>Current mode: <strong>{{ mode }}</strong></p>
+        </section>
+
+        <!-- Reflected XSS Test -->
+        <section class="card">
+            <h2>Reflected XSS Test</h2>
+            <p>
+                Submit text to check the application's immediate response.
+            </p>
+
+            <form action="{{ url_for('xss_lab') }}" method="POST">
+                <input type="hidden" name="mode" value="{{ mode }}">
+
+                <label for="search">Test input</label>
+                <input
+                    id="search"
+                    name="search"
+                    type="text"
+                    value="{{ search_text }}"
+                    placeholder="Enter harmless test text"
+                >
+
+                <button type="submit">Test Search</button>
+            </form>
+
+            {% if search_text %}
+                <div class="result">
+                    <h3>Reflected Result</h3>
+                    <p>{{ search_text }}</p>
+
+                    {% if test_result %}
+                        <div class="result">
+                            <h3>Verification Result</h3>
+
+                            <p>
+                                <strong>Status:</strong>
+                                {% if test_result.status == "PASS" %}
+                                    PASS — Output escaping verified
+                                {% elif test_result.status == "FAIL" %}
+                                    FAIL — Output escaping check failed
+                                {% elif test_result.status == "INCONCLUSIVE" %}
+                                    INCONCLUSIVE — Unable to determine the result
+                                {% else %}
+                                    {{ test_result.status }}
+                                {% endif %}
+                            </p>
+
+                            
+                            <p>{{ test_result.message }}</p>
+
+                            {% if test_result.verification_status is defined %}
+                                <p>
+                                    <strong>Fixture Verification Status:</strong>
+                                    {% if test_result.verification_status == "SAFE" %}
+                                        SAFE — Output matches the expected escaped output
+                                    {% elif test_result.verification_status == "POTENTIAL RISK" %}
+                                        POTENTIAL RISK — Unescaped input found in simulated output
+                                    {% else %}
+                                        {{ test_result.verification_status }}
+                                    {% endif %}
+                                </p>
+
+                                <p>{{ test_result.verification_message }}</p>
+                            {% endif %}
+
+                            {% if test_result.output is defined %}
+                                <p>
+                                    <strong>Simulated output (displayed as text):</strong>
+                                </p>
+                                <pre>{{ test_result.output }}</pre>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </section>
+
+        
+        <!-- Stored XSS Test -->
+        <section class="card">
+            <h2>Stored XSS Test</h2>
+            <p>
+                Submit a comment and check how it is displayed after being saved.
+            </p>
+
+            <form action="{{ url_for('add_comment') }}" method="POST">
+                <label for="comment">Test comment</label>
+                <textarea
+                    id="comment"
+                    name="comment"
+                    placeholder="Enter harmless test text"
+                    required
+                ></textarea>
+
+                <button type="submit">Save Test Comment</button>
+            </form>
+
+            <div class="result">
+                <h3>Saved Test Comments</h3>
+
+                {% if comments %}
+                    {% for comment in comments %}
+                        <article class="comment">
+                            <p>{{ comment["content"] }}</p>
+                            <small>{{ comment["created_at"] }}</small>
+
+                            <div class="verification-result">
+                                <strong>Stored XSS Check:</strong>
+
+                                {% if stored_results[loop.index0].status == "PASS" %}
+                                    <span>PASS — Escaping verified</span>
+                                {% elif stored_results[loop.index0].status == "INCONCLUSIVE" %}
+                                    <span>Plain text — no HTML-sensitive characters detected</span>
+                                {% else %}
+                                    <span>{{ stored_results[loop.index0].status }}</span>
+                                {% endif %}
+                            </div>
+
+                            <form
+                                class="delete-comment-form"
+                                action="{{ url_for('delete_comment', comment_id=comment['id']) }}"
+                                method="POST"
+                            >
+                                <button type="submit" class="delete-button">
+                                    Delete
+                                </button>
+                            </form>
+                        </article>
+                    {% endfor %}
+                {% else %}
+                    <p>No comments have been saved yet.</p>
+                {% endif %}
+            </div>
+        </section>
+
+    </main>
+<script>
+let confirmedCommentDeletions = 0;
+
+document.querySelectorAll(".delete-comment-form").forEach(form => {
+    form.addEventListener("submit", async event => {
+        event.preventDefault();
+
+        if (confirmedCommentDeletions < 2) {
+            const confirmed = confirm(
+                "Are you sure you want to delete this comment?"
+            );
+
+            if (!confirmed) {
+                return;
+            }
+
+            confirmedCommentDeletions++;
+        }
+
+        const button = form.querySelector("button");
+        button.disabled = true;
+
+        try {
+            const response = await fetch(form.action, {
+                method: "POST",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error("Delete failed");
+            }
+
+            const comment = form.closest(".comment");
+            const result = comment.closest(".result");
+
+            comment.remove();
+
+            const remainingComments = result.querySelectorAll(".comment");
+
+            if (remainingComments.length === 0) {
+                result.innerHTML =
+                    "<h3>Saved Comments</h3><p>No comments yet.</p>";
+            }
+        } catch (error) {
+            alert("Could not delete the comment. Please try again.");
+            button.disabled = false;
+        }
+    });
+});
+</script>
+</body>
+</html>

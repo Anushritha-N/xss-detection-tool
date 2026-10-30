@@ -1,0 +1,39 @@
+Generated At,Test Name,Test Category,Expected Behavior,Test Result,Security Outcome,Remediation Status,Evidence / Details
+2026-10-30T20:16:46,test_app.py::test_reflected_input_is_escaped,Reflected XSS Verification,Reflected input should be HTML-escaped before rendering,PASS,Mitigation Verified,Reflected output escaping regression check passed,
+2026-10-30T20:16:46,test_app.py::test_stored_comment_is_escaped,Stored XSS Verification,Stored comments should remain safely escaped when displayed,PASS,Mitigation Verified,Stored output escaping regression check passed,
+2026-10-30T20:16:46,test_app.py::test_stored_comment_remains_escaped_after_retrieval,Stored XSS Verification,Stored comments should remain safely escaped when displayed,PASS,Mitigation Verified,Stored output escaping regression check passed,
+2026-10-30T20:16:46,test_app.py::test_multiple_stored_comments_are_displayed_safely,Stored XSS Verification,Stored comments should remain safely escaped when displayed,PASS,Mitigation Verified,Stored output escaping regression check passed,
+2026-10-30T20:16:46,test_app.py::test_reflected_html_attribute_input_is_escaped,Reflected XSS Verification,Reflected input in an HTML attribute context should be handled safely,PASS,Mitigation Verified,Reflected attribute-context escaping check passed,
+2026-10-30T20:16:46,test_app.py::test_stored_html_attribute_input_is_escaped,Stored XSS Verification,Stored input in an HTML attribute context should be handled safely,PASS,Mitigation Verified,Stored attribute-context escaping check passed,
+2026-10-30T20:16:46,test_app.py::test_reflected_special_characters_are_escaped,Reflected XSS Verification,Special characters in reflected input should be safely escaped,PASS,Mitigation Verified,Special-character escaping check passed,
+2026-10-30T20:16:46,test_app.py::test_stored_comment_remains_escaped_across_page_requests,Stored XSS Verification,Stored comments should remain safely escaped when displayed,PASS,Mitigation Verified,Stored output escaping regression check passed,
+2026-10-30T20:16:46,test_app.py::test_dashboard_requires_login,General Regression Test,Review the test definition to determine its expected behavior,PASS,Security Check Passed,Dashboard access-control regression check passed,
+2026-10-30T20:16:46,test_app.py::test_delete_security_event_requires_login,General Regression Test,Review the test definition to determine its expected behavior,PASS,Security Check Passed,Security-event access-control regression check passed,
+2026-10-30T20:16:46,test_app.py::test_run_security_tests_requires_login,General Regression Test,Review the test definition to determine its expected behavior,PASS,Security Check Passed,Security-test access-control regression check passed,
+2026-10-30T20:16:46,test_xss_checks.py::test_escaped_html_is_recognized,Escaping Verification,Escaped HTML should be recognized as safe output,PASS,Safe Output Verification Passed,PASS: Escaped HTML was recognized as safe output by verify_output_is_escaped,
+2026-10-30T20:16:46,test_xss_checks.py::test_unescaped_html_is_rejected,Escaping Regression Test,Unescaped HTML should be rejected as unsafe output,PASS,Unsafe Output Detection Verified,PASS: Unescaped HTML was correctly classified as FAIL by verify_output_is_escaped,
+2026-10-30T20:16:46,test_xss_checks.py::test_empty_input_is_inconclusive,Input Handling,Empty input should produce an inconclusive result,PASS,Security Check Passed,PASS: Empty input was classified as INCONCLUSIVE,
+2026-10-30T20:16:46,test_xss_checks.py::test_plain_text_without_html_sensitive_characters_is_inconclusive,Input Handling,Plain text without HTML-sensitive characters should be treated as inconclusive,PASS,Security Check Passed,PASS: Plain text was classified as INCONCLUSIVE,
+2026-10-30T20:16:46,test_xss_checks.py::test_missing_input_is_inconclusive,Input Handling,Missing input should produce an inconclusive result,PASS,Security Check Passed,PASS: Non-matching rendered content was classified as INCONCLUSIVE,
+2026-10-30T20:16:46,test_xss_checks.py::test_unescaped_input_is_rejected_even_if_escaped_copy_exists,Escaping Regression Test,Unsafe input should not be accepted merely because an escaped copy exists,PASS,Unsafe Output Detection Verified,PASS: Mixed escaped and unescaped output was correctly classified as FAIL,
+2026-10-30T20:16:46,test_xss_fixtures.py::test_reflected_fixture_distinguishes_unsafe_and_safe_output,Controlled Simulation,Reflected input should be handled safely,PASS,Unsafe and Safe Output Differentiation Verified,PASS: Vulnerable output preserved raw HTML markup; safe output contained escaped HTML,
+2026-10-30T20:16:46,test_xss_fixtures.py::test_stored_fixture_distinguishes_unsafe_and_safe_output,Controlled Simulation,Stored input should be handled safely,PASS,Unsafe and Safe Output Differentiation Verified,PASS: Vulnerable stored output preserved raw HTML markup; safe stored output contained escaped HTML,
+2026-10-30T20:16:46,test_xss_fixtures.py::test_reflected_fixture_verification_detects_potential_risk,Controlled Simulation,Reflected input should be handled safely,PASS,Potential XSS Risk Detection Verified,PASS: Verification classified vulnerable reflected output as POTENTIAL RISK,
+2026-10-30T20:16:46,test_xss_fixtures.py::test_stored_fixture_verification_accepts_safe_output,Controlled Simulation,Stored input should be handled safely,PASS,Safe Output Verification Passed,PASS: Verification classified escaped stored output as SAFE,
+2026-10-30T20:16:46,Reflected XSS Browser Test,Reflected XSS Browser Verification,Reflected input should be handled safely,PASS,Reflected XSS Mitigation Verified,Reflected input handling verified by browser test,PASS: Reflected input was displayed as text and the marker did not execute. 
+2026-10-30T20:16:46,Stored XSS Browser Test,Stored XSS Browser Verification,Stored input should be handled safely,PASS,Stored XSS Mitigation Verified,Stored input handling verified by browser test,"PASS: The suspicious payload was blocked, was not published, and did not execute. PASS: Stored input was displayed as text and the marker did not execute. "
+2026-10-30T20:16:46,Vulnerable Fixture Browser Test,Vulnerable Fixture Detection,Controlled vulnerable fixture should demonstrate unsafe behavior,PASS,Vulnerability Detected,Detection verified; fixture intentionally remains vulnerable,PASS: Browser detected script execution in the isolated vulnerable fixture. 
+2026-10-30T20:16:46,Vulnerable Fixture Remediation Test,Vulnerable Fixture Detection,Controlled vulnerable fixture should demonstrate unsafe behavior,PASS,Vulnerable Behavior Verified,Baseline vulnerability confirmed; no remediation claimed,PASS: Vulnerable fixture executed the test marker. 
+2026-10-30T20:16:46,Secured Fixture Remediation Test,Remediation Verification,Input should be displayed safely without marker execution,PASS,Mitigation Verified,Mitigation verified by controlled browser test,PASS: Secured fixture displayed the input as text without executing the marker. 
+
+Total Tests,26
+Passed,26
+Failed,0
+Overall Status,PASS
+
+REMEDIATION SUMMARY
+Check,Result,Details
+Vulnerable Fixture Detection,PASS,Script execution was detected in the intentionally vulnerable test fixture.
+Secured Fixture Verification,PASS,The secured fixture displayed the test input as text without executing the marker.
+Reflected XSS Verification,PASS,The reflected input was displayed as text without executing the marker.
+Stored XSS Verification,PASS,The stored input was displayed as text without executing the marker.

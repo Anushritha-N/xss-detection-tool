@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XSS Verification Report</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="report-page">
+    <main class="container">
+        <h1>XSS Verification Report</h1>
+        <p>Security test results for the XSS Detection and Mitigation Tool.</p>
+        <div class="report-actions">
+            <a class="button-link" href="{{ url_for('download_report') }}">Download CSV Report</a>
+            <a class="button-link button-link-secondary" href="{{ url_for('home') }}">Back to Home</a>
+        </div>
+
+        <!-- Summary -->
+        <section class="card">
+            <h2>Summary</h2>
+            <p>Total Checks: <strong>{{ summary.total }}</strong></p>
+            <p>Passed: <strong>{{ summary.passed }}</strong></p>
+            <p>Failed: <strong>{{ summary.failed }}</strong></p>
+            <p>Overall Status: <strong>{{ summary.status }}</strong></p>
+            <p>Generated At: {{ generated_at }}</p>
+        </section>
+
+        <!-- Test categories -->
+        <section class="card">
+            <h2>Test Categories</h2>
+            {% if category_counts %}
+            <ul>
+                {% for category, count in category_counts.items() %}
+                <li>{{ category }}: {{ count }}</li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>No test categories are available.</p>
+            {% endif %}
+        </section>
+
+        <!-- Security findings -->
+        <section class="card">
+            <h2>Security Findings</h2>
+
+            {% if browser_findings %}
+                {% for finding in browser_findings %}
+                <article class="finding">
+                    <h3>{{ finding.title }}</h3>
+                    <p><strong>Test result:</strong> {{ finding.status }}</p>
+                    <p>
+                        <strong>{{ finding.evidence_label }}:</strong>
+                        {{ finding.details }}
+                    </p>
+                    <p>
+                        <strong>Recommended mitigation:</strong>
+                        {{ finding.recommendation }}
+                    </p>
+
+                    {% if finding.test_name == "Vulnerable Fixture Browser Test"
+                       or finding.test_name == "Vulnerable Fixture Remediation Test"
+                       or finding.test_name == "Secured Fixture Remediation Test" %}
+                    <p>
+                        <strong>Scope:</strong>
+                        This result concerns the isolated local test fixtures,
+                        not proof that the main application is vulnerable.
+                    </p>
+                    {% endif %}
+                </article>
+                {% endfor %}
+            {% else %}
+            <p>
+                Browser findings are not available. Run the report generator
+                to produce the latest test results.
+            </p>
+            {% endif %}
+        </section>
+
+        <!-- Before-and-after verification -->
+        <section class="card">
+            <h2>Before-and-After Verification</h2>
+
+            <p>
+                The following table compares the observed behavior in the
+                deliberately vulnerable fixture with the secured fixture.
+            </p>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Scenario</th>
+                            <th>Observed Behavior</th>
+                            <th>Test Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if browser_findings %}
+                            {% for finding in browser_findings %}
+                                {% if finding.test_name == "Vulnerable Fixture Remediation Test" %}
+                                <tr>
+                                    <td>Before remediation — Vulnerable fixture</td>
+                                    <td>
+                                        {{ finding.details }}
+                                    </td>
+                                    <td>{{ finding.status }}</td>
+                                </tr>
+                                {% elif finding.test_name == "Secured Fixture Remediation Test" %}
+                                <tr>
+                                    <td>After remediation — Secured fixture</td>
+                                    <td>
+                                        {{ finding.details }}
+                                    </td>
+                                    <td>{{ finding.status }}</td>
+                                </tr>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+
+            <p>
+                <strong>Interpretation:</strong>
+                A PASS for the vulnerable-fixture test means the browser
+                successfully observed the expected test marker executing.
+                A PASS for the secured-fixture test means the marker did not
+                execute and the input was displayed as text.
+            </p>
+            <p>
+                These results demonstrate the expected behavior for the
+                tested payload and fixtures. They do not prove that all
+                possible XSS vulnerabilities have been eliminated.
+            </p>
+        </section>
+
+        <!-- Remediation summary generated by generate_report.py -->
+        <section class="card">
+            <h2>Remediation Summary</h2>
+            <p>
+                These checks reflect the latest generated CSV report. A PASS for
+                the vulnerable fixture means the expected unsafe behavior was
+                detected; it does not mean that fixture is secure.
+            </p>
+            {% if remediation_summary %}
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Check</th>
+                            <th>Result</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in remediation_summary %}
+                        <tr>
+                            <td>{{ item.check }}</td>
+                            <td>{{ item.result }}</td>
+                            <td>{{ item.details }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p>No remediation summary is available yet. Run the security tests to generate it.</p>
+            {% endif %}
+        </section>
+
+        <!-- Individual test results -->
+        <section class="card">
+            <h2>Individual Test Results</h2>
+
+            {% if tests %}
+            <div class="table-container">
+                <table class="report-table individual-results-table">
+                    <thead>
+                        <tr>
+                            <th>Test Name</th>
+                            <th>Category</th>
+                            <th>Expected Behavior</th>
+                            <th>Result</th>
+                            <th>Security Outcome</th>
+                            <th>Remediation Status</th>
+                            <th>Evidence / Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for test in tests %}
+                        <tr>
+                            <td>{{ test.name }}</td>
+                            <td>{{ test.category }}</td>
+                            <td>{{ test.expected_behavior }}</td>
+                            <td>{{ test.result }}</td>
+                            <td>{{ test.security_outcome }}</td>
+                            <td>{{ test.remediation_status }}</td>
+                            <td>{{ test.evidence }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p>No test results found. Generate the report first.</p>
+            {% endif %}
+        </section>
+
+        <!-- Scope and limitations -->
+        <section class="card">
+            <h2>Scope and Limitations</h2>
+
+            <h3>Verified</h3>
+            <ul>
+                <li>Reflected input escaping in the main Flask application.</li>
+                <li>Stored comments displayed safely after database retrieval.</li>
+                <li>Automated regression tests for escaping behavior.</li>
+                <li>Browser checks for reflected and stored input in the secure application.</li>
+                <li>Browser detection of JavaScript execution in the isolated vulnerable fixture.</li>
+                <li>Browser verification that the secured fixture displays the tested input as text.</li>
+            </ul>
+
+            <h3>Not Yet Verified</h3>
+            <ul>
+                <li>DOM-based XSS detection.</li>
+                <li>Comprehensive scanning across arbitrary web applications.</li>
+                <li>Comprehensive severity assessment and payload-independent vulnerability coverage.</li>
+                <li>Protection against every possible XSS payload and browser context.</li>
+            </ul>
+
+            <p>
+                These results cover the specific tests listed in this report.
+                They do not establish that the application is free from all
+                XSS vulnerabilities.
+            </p>
+        </section>
+    </main>
+</body>
+</html>

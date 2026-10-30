@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XSS Security Inspector</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <main class="popup">
+        <header>
+            <h1>XSS Security Inspector</h1>
+            <p>Local browser security inspection</p>
+        </header>
+
+        <section class="status-card">
+            <span class="status-dot"></span>
+            <div>
+                <strong id="status-title">Ready to inspect</strong>
+                <p id="status-message">
+                    Inspect your local XSS testing page.
+                </p>
+            </div>
+        </section>
+
+        <button id="inspect-button" type="button">
+            Inspect Current Page
+        </button>
+
+        <section id="results" aria-live="polite" hidden>
+            <h2>Inspection Results</h2>
+            <div class="result-row">
+                <span>Forms found</span>
+                <strong id="form-count">0</strong>
+            </div>
+            <div class="result-row">
+                <span>Input fields</span>
+                <strong id="input-count">0</strong>
+            </div>
+            <div class="result-row">
+                <span>Password fields</span>
+                <strong id="password-count">0</strong>
+            </div>
+            <p id="inspection-note"></p>
+            <h3>Input Field Details</h3>
+            <div id="input-details"></div>
+            <h3>Security Findings</h3>
+            <div id="security-findings"></div>
+            <h3>XSS Pattern Checks</h3>
+            <div id="xss-findings"></div>
+            <button id="download-report" type="button">
+                Download Inspection Report
+            </button>
+        </section>
+
+        <footer>
+            <p>Inspection only — not a guarantee that a page is XSS-safe.</p>
+        </footer>
+    </main>
+
+    <script src="popup.js"></script>
+</body>
+</html>

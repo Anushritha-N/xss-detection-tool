@@ -1,0 +1,186 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XSS Detection and Mitigation Tool</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="home-page">
+
+    <!-- Navigation -->
+    <nav class="main-navigation home-nav">
+        <a href="{{ url_for('home') }}" class="active">Home</a>
+        <a href="{{ url_for('xss_lab') }}">XSS Security Lab</a>
+        <a href="{{ url_for('verification_report') }}">Verification Report</a>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="home-hero">
+        <div class="hero-content">
+            <span class="hero-label">WEB APPLICATION SECURITY TESTING</span>
+
+            <h1>Cross-Site Scripting (XSS)<br>
+                Detection and Mitigation Tool
+            </h1>
+
+            <p>
+                A controlled environment to identify XSS vulnerabilities,
+                demonstrate secure fixes, and verify application security.
+            </p>
+
+            <a class="button-link hero-button"
+               href="{{ url_for('xss_lab') }}">
+                Explore Security Lab
+                <span aria-hidden="true">→</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="home-main">
+
+        <!-- Welcome Section -->
+        <section class="home-intro">
+            <div class="intro-content">
+                <span class="section-label">ABOUT THE PROJECT</span>
+
+                <h2>Welcome to the Security Testing Platform</h2>
+
+                <p>
+                    This platform demonstrates how web applications can
+                    identify suspicious input, prevent unsafe output
+                    rendering, and monitor potential Cross-Site Scripting
+                    (XSS) activity.
+                </p>
+
+                <p>
+                    Explore controlled vulnerability simulations, verify
+                    secure input handling, and review automated security
+                    testing results.
+                </p>
+            </div>
+
+            <div class="intro-highlight">
+                <div class="highlight-icon">🛡</div>
+                <h3>Test. Detect. Verify.</h3>
+                <p>
+                    Explore the complete process of identifying unsafe
+                    behavior and verifying secure output handling.
+                </p>
+            </div>
+        </section>
+
+        <!-- Project Features -->
+        <section class="home-features">
+            <div class="section-heading">
+                <span class="section-label">WHAT THE PLATFORM OFFERS</span>
+                <h2>Project Features</h2>
+                <p>Explore the main capabilities of the security testing tool.</p>
+            </div>
+
+            <div class="home-feature-grid">
+
+                <article class="home-feature-card">
+                    <div class="feature-icon">↗</div>
+                    <h3>Reflected XSS Testing</h3>
+                    <p>
+                        Examine how user input is handled when it is returned
+                        immediately in a web response.
+                    </p>
+                </article>
+
+                <article class="home-feature-card">
+                    <div class="feature-icon">▣</div>
+                    <h3>Stored XSS Testing</h3>
+                    <p>
+                        Verify how saved comments are displayed and whether
+                        untrusted content is properly escaped.
+                    </p>
+                </article>
+
+                <article class="home-feature-card">
+                    <div class="feature-icon">◈</div>
+                    <h3>Security Monitoring</h3>
+                    <p>
+                        Review suspicious submissions, severity levels,
+                        and security detection reasons.
+                    </p>
+                </article>
+
+                <article class="home-feature-card">
+                    <div class="feature-icon">✓</div>
+                    <h3>Remediation Verification</h3>
+                    <p>
+                        Compare vulnerable and secured behavior through
+                        automated tests and browser verification.
+                    </p>
+                </article>
+
+            </div>
+        </section>
+
+        <!-- Explore Platform -->
+        <section class="home-explore">
+            <div class="section-heading">
+                <span class="section-label">GET STARTED</span>
+                <h2>Explore the Platform</h2>
+                <p>
+                    Choose a section to explore the security testing
+                    environment.
+                </p>
+            </div>
+
+            <div class="home-actions">
+
+                <a class="home-action-link"
+                   href="{{ url_for('xss_lab') }}">
+                    <span class="action-number">01</span>
+                    <span>
+                        <strong>Start Testing</strong>
+                        <small>Open the XSS Security Lab</small>
+                    </span>
+                    <span class="action-arrow">→</span>
+                </a>
+
+                <a class="home-action-link"
+                   href="{{ url_for('verification_report') }}">
+                    <span class="action-number">02</span>
+                    <span>
+                        <strong>Verification Report</strong>
+                        <small>Review test results and evidence</small>
+                    </span>
+                    <span class="action-arrow">→</span>
+                </a>
+
+                <a class="home-action-link"
+                   href="{{ url_for('dashboard') }}">
+                    <span class="action-number">03</span>
+                    <span>
+                        <strong>Security Dashboard</strong>
+                        <small>Monitor security events</small>
+                    </span>
+                    <span class="action-arrow">→</span>
+                </a>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="home-footer">
+        <p>
+            XSS Detection and Mitigation Tool
+            <span> | </span>
+            Controlled Security Testing Environment
+        </p>
+        <small>For educational and authorized security testing purposes only.</small>
+    </footer>
+
+</body>
+</html>
