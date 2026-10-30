@@ -107,7 +107,7 @@ For Windows PowerShell:
 Install the Python packages required by the project:
 
 ```bash
-pip install Flask pytest
+pip install -r requirements.txt
 ```
 
 Additional browser-testing dependencies may be required depending on the browser automation configuration.
@@ -130,6 +130,10 @@ Open the application in your browser:
 
 ```text
 http://127.0.0.1:5000
+```
+
+```bash
+python -m playwright install chromium
 ```
 
 ## 7. Running Tests
