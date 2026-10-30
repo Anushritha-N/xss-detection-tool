@@ -596,6 +596,7 @@ def delete_security_event(event_id):
 
 
 
+
 def read_dashboard_report():
     report_path = (
         Path(__file__).parent
@@ -609,6 +610,7 @@ def read_dashboard_report():
         "failed": 0,
         "status": "NOT RUN",
     }
+
     recent_results = []
     category_counts = {}
 
@@ -618,6 +620,7 @@ def read_dashboard_report():
     with report_path.open("r", newline="", encoding="utf-8") as file:
         rows = list(csv.reader(file))
 
+    # Read overall report totals.
     for row in rows:
         if len(row) >= 2:
             if row[0] == "Total Tests":
@@ -629,44 +632,49 @@ def read_dashboard_report():
             elif row[0] == "Overall Status":
                 summary["status"] = row[1]
 
+    # Read individual test results.
     for row in rows:
-        if (
-            len(row) >= 5
-            and row[0] != "Generated At"
-            and row[1] not in {
-                "Total Tests",
-                "Passed",
-                "Failed",
-                "Overall Status",
-                "Test Name",
+        if len(row) < 8 or row[0] == "Generated At":
+            continue
+
+        if not row[0] or not row[1]:
+            continue
+
+        if row[1] in {
+            "Total Tests",
+            "Passed",
+            "Failed",
+            "Overall Status",
+            "Test Name",
+        }:
+            continue
+
+        category = row[2].strip()
+        result = row[4].strip().upper()
+
+        if not category:
+            continue
+
+        if category not in category_counts:
+            category_counts[category] = {
+                "total": 0,
+                "passed": 0,
+                "failed": 0,
             }
-            and row[1]
-        ):
-            category = row[2]
-            result = row[3].upper()
 
-            # Count each test by its report category.
-            if category:
-                if category not in category_counts:
-                    category_counts[category] = {
-                        "total": 0,
-                        "passed": 0,
-                        "failed": 0,
-                    }
+        category_counts[category]["total"] += 1
 
-                category_counts[category]["total"] += 1
+        if result in ("PASS", "PASSED"):
+            category_counts[category]["passed"] += 1
+        elif result in ("FAIL", "FAILED"):
+            category_counts[category]["failed"] += 1
 
-                if result in ("PASS", "PASSED"):
-                    category_counts[category]["passed"] += 1
-                elif result in ("FAIL", "FAILED"):
-                    category_counts[category]["failed"] += 1
-
-            recent_results.append({
-                "name": row[1],
-                "category": category,
-                "result": row[3],
-                "details": row[4],
-            })
+        recent_results.append({
+            "name": row[1],
+            "category": category,
+            "result": row[4],
+            "details": row[7],
+        })
 
     return summary, recent_results[-8:], category_counts
 
